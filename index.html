@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>University Assignment Cover Page Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1a1a2e;
+    --panel: #16213e;
+    --border: #0f3460;
+    --accent: #e94560;
+    --accent2: #533483;
+    --text: #eaeaea;
+    --muted: #8892a4;
+    --input-bg: #0d1b2a;
+    --input-border: #1e3a5f;
+    --label: #a0aec0;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── LEFT PANEL ── */
+  #sidebar {
+    width: 300px;
+    min-width: 300px;
+    background: var(--panel);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #sidebar-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+  }
+
+  #sidebar-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    color: #fff;
+  }
+
+  #sidebar-header p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 3px;
+  }
+
+  #form-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .section-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 18px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label:first-child { margin-top: 0; }
+
+  .field { margin-bottom: 10px; }
+
+  .field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--label);
+    margin-bottom: 4px;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 2px rgba(83,52,131,0.25);
+  }
+
+  .field textarea { resize: vertical; min-height: 60px; }
+
+  select option { background: #0d1b2a; }
+
+  #sidebar-footer {
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  #btn-pdf {
+    width: 100%;
+    padding: 11px;
+    background: linear-gradient(135deg, var(--accent) 0%, #c73652 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  #btn-pdf:hover { opacity: 0.9; }
+  #btn-pdf:active { transform: scale(0.98); }
+
+  #btn-pdf svg { width: 16px; height: 16px; }
+
+  /* ── RIGHT PREVIEW AREA ── */
+  #preview-area {
+    flex: 1;
+    background: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    padding: 40px;
+    position: relative;
+  }
+
+  #preview-area::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 40%, rgba(83,52,131,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(233,69,96,0.07) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* ── A4 COVER PAGE ── */
+  #cover-page {
+    width: 210mm;
+    height: 297mm;
+    padding: 25.4mm;
+    background: #ffffff;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* TOP BLOCK */
+  .cp-top {
+    text-align: center;
+  }
+
+  .cp-logo {
+    width: 150px;
+    height: 175px;
+    margin: 0 auto 30px;
+    display: block;
+  }
+
+
+
+  .cp-uni-en {
+    font-size: 25pt;
+    font-weight: 700;
+    font-family: 'Times New Roman', Times, serif;
+    color: #0d0d0d;
+    line-height: 1.2;
+  }
+
+  .cp-dept-label {
+    font-size: 14pt;
+    font-style: italic;
+    color: #0d0d0d;
+    margin-top: 12px;
+    font-family: 'Times New Roman', Times, serif;
+  }
+
+  .cp-dept-name {
+    font-size: 17pt;
+    font-weight: 700;
+    font-family: 'Times New Roman', Times, serif;
+    color: #111;
+    line-height: 1.3;
+    margin-top: 10px;
+  }
+
+  /* DIVIDER */
+  .cp-divider {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 12px 0 10px;
+  }
+
+  /* MIDDLE BLOCK */
+  .cp-middle {
+    text-align: center;
+  }
+
+  .cp-course {
+    font-size: 14pt;
+    font-style: italic;
+    color: #333;
+    font-family: 'Times New Roman', Times, serif;
+    line-height: 1.6;
+  }
+
+  .cp-doc-type {
+    font-size: 28pt;
+    font-weight: 700;
+    font-family: 'Times New Roman', Times, serif;
+    color: #0d0d0d;
+    margin-top: 8px;
+  }
+
+  /* BOTTOM BLOCK: submission table */
+  .cp-bottom {}
+
+  .cp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 14pt;
+    border: 1px solid #555;
+  }
+
+  .cp-table th {
+    background: #c0c0c0;
+    font-weight: 700;
+    font-size: 16pt;
+    padding: 7px 10px;
+    text-align: left;
+    border: 1px solid #666;
+    color: #000;
+  }
+
+  .cp-table td {
+    padding: 7px 9px;
+    vertical-align: top;
+    border: 1px solid #aaa;
+    color: #111;
+    line-height: 1.3;
+    width: 50%;
+  }
+
+  .cp-table td.left-col { padding-right: 10px; }
+  .cp-table td.right-col { padding-left: 10px; }
+
+  .cp-date {
+    text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 13pt;
+    font-style: italic;
+    color: #222;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR FORM ══ -->
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>📄 Cover Page Generator</h1>
+    <p>By Vengeance</p>
+  </div>
+
+  <div id="form-scroll">
+
+    <div class="section-label">University</div>
+
+
+    <div class="field">
+      <label>University Name (English)</label>
+      <input type="text" id="f-uni-en" value="Pabna University of Science & Technology"
+        oninput="document.getElementById('p-uni-en').textContent=this.value">
+    </div>
+
+    <div class="field">
+      <label>Logo URL (paste image URL or leave blank)</label>
+      <input type="text" id="f-logo" placeholder="https://... or leave blank for default"
+        oninput="updateLogo(this.value)">
+    </div>
+
+    <div class="section-label">Department Header</div>
+
+    <div class="field">
+      <label>Department of</label>
+      <input type="text" id="f-dept" value="Electrical and Electronic Engineering"
+        oninput="document.getElementById('p-dept').textContent=this.value">
+    </div>
+
+    <div class="field">
+      <label>Faculty</label>
+      <input type="text" id="f-faculty" value="Faculty of Engineering and Technology"
+        oninput="document.getElementById('p-faculty').textContent=this.value">
+    </div>
+
+    <div class="section-label">Course</div>
+
+    <div class="field">
+      <label>Course Title</label>
+      <input type="text" id="f-course-title" value=""
+        oninput="document.getElementById('p-course-title').textContent=this.value">
+    </div>
+
+    <div class="field">
+      <label>Course Code</label>
+      <input type="text" id="f-course-code" value=""
+        oninput="document.getElementById('p-course-code').textContent=this.value">
+    </div>
+
+    <div class="field">
+      <label>Document Type</label>
+      <select id="f-doc-type" onchange="document.getElementById('p-doc-type').textContent=this.value">
+        <option value="Assignment" selected>Assignment</option>
+        <option value="Lab Report">Lab Report</option>
+      </select>
+    </div>
+
+    <div class="section-label">Student Info</div>
+
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="f-stu-name" value="Md Faysal Al Shariar"
+        oninput="updateStudentBlock()">
+    </div>
+
+    <div class="field">
+      <label>Roll Number</label>
+      <input type="text" id="f-stu-roll" value=""
+        oninput="updateStudentBlock()">
+    </div>
+
+    <div class="field">
+      <label>Session</label>
+      <input type="text" id="f-stu-session" value="2023-24"
+        oninput="updateStudentBlock()">
+    </div>
+
+    <div class="field">
+      <label>Year & Semester</label>
+      <input type="text" id="f-stu-year" value="2nd year 1st Semester"
+        oninput="updateStudentBlock()">
+    </div>
+
+    <div class="field">
+      <label>Student Department</label>
+      <input type="text" id="f-stu-dept" value="Department of Electrical And Electronic Engineering"
+        oninput="updateStudentBlock()">
+    </div>
+
+    <div class="field">
+      <label>Student University</label>
+      <input type="text" id="f-stu-uni" value="Pabna University Of Science &amp; Technology"
+        oninput="updateStudentBlock()">
+    </div>
+
+    <div class="section-label">Teacher Info</div>
+
+    <div class="field">
+      <label>Teacher Name</label>
+      <input type="text" id="f-tch-name" value=""
+        oninput="updateTeacherBlock()">
+    </div>
+
+    <div class="field">
+      <label>Title / Rank</label>
+      <select id="f-tch-title" onchange="updateTeacherBlock()">
+        <option value="Professor">Professor</option>
+        <option value="Associate Professor" selected>Associate Professor</option>
+        <option value="Assistant Professor">Assistant Professor</option>
+        <option value="Lecturer">Lecturer</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Teacher Department</label>
+      <input type="text" id="f-tch-dept" value="Department of "
+        oninput="updateTeacherBlock()">
+    </div>
+
+    <div class="field">
+      <label>Teacher Faculty</label>
+      <input type="text" id="f-tch-faculty" value="Faculty of "
+        oninput="updateTeacherBlock()">
+    </div>
+
+    <div class="field">
+      <label>Teacher University</label>
+      <input type="text" id="f-tch-uni" value="Pabna University Of Science &amp; Technology"
+        oninput="updateTeacherBlock()">
+    </div>
+
+    <div class="section-label">Date</div>
+
+    <div class="field">
+      <label>Date of Submission</label>
+      <input type="text" id="f-date" value="15-04-2026"
+        oninput="document.getElementById('p-date').textContent='Date of Submission: '+this.value">
+    </div>
+
+  </div><!-- /form-scroll -->
+
+  <div id="sidebar-footer">
+    <button id="btn-pdf" onclick="generatePDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 15V3M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/>
+      </svg>
+      Download PDF
+    </button>
+  </div>
+</div>
+
+<!-- ══ PREVIEW ══ -->
+<div id="preview-area">
+  <div id="cover-page">
+
+    <!-- TOP -->
+    <div class="cp-top">
+      <!-- University Logo -->
+      <img id="p-logo" class="cp-logo"
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUJb09aXlqV9RNHAp5mk_QaRe08kkUf2OD7A&s"
+        alt="University Logo"
+        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%2290%22 viewBox=%220 0 90 90%22><rect width=%2290%22 height=%2290%22 rx=%2245%22 fill=%22%23800000%22/><text x=%2245%22 y=%2255%22 font-size=%2230%22 fill=%22white%22 text-anchor=%22middle%22 font-family=%22serif%22>🎓</text></svg>'">
+
+      <div id="p-uni-en" class="cp-uni-en">Pabna University of Science and Technology</div>
+
+      <div class="cp-dept-label">Department of</div>
+      <div class="cp-dept-name">
+        <span id="p-dept">Electrical and Electronic Engineering</span><br>
+        <span id="p-faculty">Faculty of Engineering and Technology</span>
+      </div>
+    </div>
+
+    <!-- MIDDLE -->
+    <div class="cp-middle">
+      <hr class="cp-divider">
+      <div class="cp-course">
+        Course Title: <em id="p-course-title"></em><br>
+        Course Code: <em id="p-course-code"></em>
+      </div>
+      <div class="cp-doc-type" id="p-doc-type">Assignment</div>
+      <hr class="cp-divider">
+    </div>
+
+    <!-- BOTTOM -->
+    <div class="cp-bottom">
+      <table class="cp-table">
+        <tr>
+          <th>Submitted by:</th>
+          <th>Submitted to:</th>
+        </tr>
+        <tr>
+          <td class="left-col" id="p-student-cell">
+            Name: Md Faysal Al Shariar<br>
+            Roll: <br>
+            Session: 2023-24<br>
+            2nd year 1st Semester<br><br>
+            Department of Electrical And Electronic Engineering<br>
+            Pabna University Of Science &amp; Technology
+          </td>
+          <td class="right-col" id="p-teacher-cell">
+            <br>
+            <br><br>
+            <br>
+            Faculty of <br>
+            Pabna University Of Science &amp; Technology
+          </td>
+        </tr>
+      </table>
+
+      <div class="cp-date" id="p-date">Date of Submission: 15-04-2026</div>
+    </div>
+
+  </div><!-- /#cover-page -->
+</div><!-- /#preview-area -->
+
+<script>
+  function updateLogo(val) {
+    const img = document.getElementById('p-logo');
+    if (val.trim()) {
+      img.src = val.trim();
+    } else {
+      img.src = 'https://upload.wikimedia.org/wikipedia/en/c/c6/Pabna_University_of_Science_and_Technology_logo.png';
+    }
+  }
+
+  function updateStudentBlock() {
+    const name    = document.getElementById('f-stu-name').value;
+    const roll    = document.getElementById('f-stu-roll').value;
+    const session = document.getElementById('f-stu-session').value;
+    const year    = document.getElementById('f-stu-year').value;
+    const dept    = document.getElementById('f-stu-dept').value;
+    const uni     = document.getElementById('f-stu-uni').value;
+
+    document.getElementById('p-student-cell').innerHTML =
+      `Name: ${name}<br>Roll: ${roll}<br>Session: ${session}<br>${year}<br><br>${dept}<br>${uni}`;
+  }
+
+  function updateTeacherBlock() {
+    const name    = document.getElementById('f-tch-name').value;
+    const title   = document.getElementById('f-tch-title').value;
+    const dept    = document.getElementById('f-tch-dept').value;
+    const faculty = document.getElementById('f-tch-faculty').value;
+    const uni     = document.getElementById('f-tch-uni').value;
+
+    document.getElementById('p-teacher-cell').innerHTML =
+      `${name}<br>${title}<br><br>${dept}<br>${faculty}<br>${uni}`;
+  }
+
+  function generatePDF() {
+    const btn = document.getElementById('btn-pdf');
+    btn.textContent = 'Generating…';
+    btn.disabled = true;
+
+    const element = document.getElementById('cover-page');
+    const stuName = document.getElementById('f-stu-name').value.replace(/\s+/g, '_');
+    const docType = document.getElementById('f-doc-type').value.replace(/\s+/g, '_');
+
+    const opt = {
+      margin:       0,
+      filename:     `${stuName}_${docType}_Cover.pdf`,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
+      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 15V3M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg> Download PDF`;
+      btn.disabled = false;
+    });
+  }
+</script>
+</body>
+</html>
