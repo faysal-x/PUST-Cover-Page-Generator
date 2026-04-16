@@ -55,6 +55,7 @@
     padding: 20px 20px 16px;
     border-bottom: 1px solid var(--border);
     background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
+    position: relative;
   }
 
   #sidebar-header h1 {
@@ -205,8 +206,6 @@
     display: block;
   }
 
-
-
   .cp-uni-en {
     font-size: 25pt;
     font-weight: 700;
@@ -261,8 +260,6 @@
   }
 
   /* BOTTOM BLOCK: submission table */
-  .cp-bottom {}
-
   .cp-table {
     width: 100%;
     border-collapse: collapse;
@@ -301,21 +298,99 @@
     color: #222;
     margin-top: 20px;
   }
+
+  /* ── MOBILE RESPONSIVENESS ── */
+  #mobile-menu-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--accent) 0%, #c73652 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  #close-sidebar-btn {
+    display: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  @media (max-width: 768px) {
+    #mobile-menu-btn {
+      display: block;
+    }
+
+    #close-sidebar-btn {
+      display: block;
+    }
+
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 999;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-in-out;
+      box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+    }
+
+    #sidebar.show-sidebar {
+      transform: translateX(0);
+    }
+
+    #cover-page {
+      transform: scale(0.40);
+      transform-origin: top center;
+    }
+    
+    #preview-area {
+      padding: 20px 0;
+      align-items: flex-start;
+    }
+  }
 </style>
 </head>
 <body>
 
-<!-- ══ SIDEBAR FORM ══ -->
+<button id="mobile-menu-btn" onclick="toggleSidebar()">
+  ☰ Edit Details
+</button>
+
 <div id="sidebar">
   <div id="sidebar-header">
     <h1>PUST Cover Page Generator</h1>
     <p>By Vengeance</p>
+    <button id="close-sidebar-btn" onclick="toggleSidebar()">×</button>
   </div>
 
   <div id="form-scroll">
 
-    <div class="section-label">University</div>
-
+    <div id="sidebar-footer">
+    <button id="btn-pdf" onclick="generatePDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 15V3M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/>
+      </svg>
+      Download PDF
+    </button>
+  </div>
+  
+  <div class="section-label">University</div>
 
     <div class="field">
       <label>University Name (English)</label>
@@ -447,25 +522,12 @@
         oninput="document.getElementById('p-date').textContent='Date of Submission: '+this.value">
     </div>
 
-  </div><!-- /form-scroll -->
+  </div></div>
 
-  <div id="sidebar-footer">
-    <button id="btn-pdf" onclick="generatePDF()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 15V3M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/>
-      </svg>
-      Download PDF
-    </button>
-  </div>
-</div>
-
-<!-- ══ PREVIEW ══ -->
 <div id="preview-area">
   <div id="cover-page">
 
-    <!-- TOP -->
     <div class="cp-top">
-      <!-- University Logo -->
       <img id="p-logo" class="cp-logo"
         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUJb09aXlqV9RNHAp5mk_QaRe08kkUf2OD7A&s"
         alt="University Logo"
@@ -480,7 +542,6 @@
       </div>
     </div>
 
-    <!-- MIDDLE -->
     <div class="cp-middle">
       <hr class="cp-divider">
       <div class="cp-course">
@@ -491,7 +552,6 @@
       <hr class="cp-divider">
     </div>
 
-    <!-- BOTTOM -->
     <div class="cp-bottom">
       <table class="cp-table">
         <tr>
@@ -520,10 +580,12 @@
       <div class="cp-date" id="p-date">Date of Submission: 15-04-2026</div>
     </div>
 
-  </div><!-- /#cover-page -->
-</div><!-- /#preview-area -->
+  </div></div><script>
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('show-sidebar');
+  }
 
-<script>
   function updateLogo(val) {
     const img = document.getElementById('p-logo');
     if (val.trim()) {
