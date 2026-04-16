@@ -6,13 +6,6 @@
 <title>Free Cover Page Generator | Create Assignment Front Pages</title>
 <meta name="title" content="Free Cover Page Generator | Create Assignment Front Pages">
 <meta name="description" content="Easily generate and download custom A4 cover pages for your university assignments, lab reports, and projects in seconds. Completely free and no signup required.">
-<meta name="keywords" content="cover page generator, assignment front page, lab report cover, title page maker, university assignment, PDF generator">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://yourusername.github.io/cover-page-generator/">
-<meta property="og:title" content="Free Cover Page Generator">
-<meta property="og:description" content="Generate A4 cover pages for your assignments in seconds.">
-<meta property="og:image" content="https://yourusername.github.io/cover-page-generator/preview-image.jpg">
-<meta name="robots" content="index, follow">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -37,18 +30,20 @@
     color: var(--text);
     display: flex;
     height: 100vh;
+    height: 100dvh; /* Accounts for mobile browser bars */
     overflow: hidden;
   }
 
   /* ── LEFT PANEL ── */
   #sidebar {
-    width: 300px;
-    min-width: 300px;
+    width: 380px; /* Slightly wider to accommodate side-by-side inputs */
+    min-width: 380px;
     background: var(--panel);
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    z-index: 999;
   }
 
   #sidebar-header {
@@ -56,21 +51,23 @@
     border-bottom: 1px solid var(--border);
     background: linear-gradient(135deg, #0f3460 0%, #533483 100%);
     position: relative;
+    flex-shrink: 0;
   }
 
   #sidebar-header h1 {
     font-family: 'DM Serif Display', serif;
-    font-size: 15px;
+    font-size: 16px;
     letter-spacing: 0.5px;
     color: #fff;
   }
 
   #sidebar-header p {
-    font-size: 11px;
-    color: rgba(255,255,255,0.65);
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
     margin-top: 3px;
   }
 
+  /* ── SCROLLING FORM AREA ── */
   #form-scroll {
     flex: 1;
     overflow-y: auto;
@@ -80,8 +77,8 @@
   }
 
   .section-label {
-    font-size: 9px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--accent);
@@ -92,14 +89,26 @@
 
   .section-label:first-child { margin-top: 0; }
 
+  /* Grid Layout for Side-by-Side Inputs */
+  .input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .input-row .field {
+    flex: 1;
+    margin-bottom: 0;
+  }
+
   .field { margin-bottom: 10px; }
 
   .field label {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--label);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
 
   .field input,
@@ -111,41 +120,41 @@
     border-radius: 6px;
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    padding: 7px 10px;
+    font-size: 13px;
+    padding: 9px 10px;
     outline: none;
     transition: border-color 0.2s;
     appearance: none;
   }
 
   .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
+  .field select:focus {
     border-color: var(--accent2);
     box-shadow: 0 0 0 2px rgba(83,52,131,0.25);
   }
 
-  .field textarea { resize: vertical; min-height: 60px; }
-
   select option { background: #0d1b2a; }
 
+  /* ── PINNED FOOTER ── */
   #sidebar-footer {
-    padding: 14px 16px;
+    padding: 16px;
     border-top: 1px solid var(--border);
+    background: var(--panel);
+    flex-shrink: 0;
   }
 
   #btn-pdf {
     width: 100%;
-    padding: 11px;
+    padding: 14px;
     background: linear-gradient(135deg, var(--accent) 0%, #c73652 100%);
     color: #fff;
     border: none;
     border-radius: 8px;
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
     transition: opacity 0.2s, transform 0.1s;
     display: flex;
     align-items: center;
@@ -155,8 +164,6 @@
 
   #btn-pdf:hover { opacity: 0.9; }
   #btn-pdf:active { transform: scale(0.98); }
-
-  #btn-pdf svg { width: 16px; height: 16px; }
 
   /* ── RIGHT PREVIEW AREA ── */
   #preview-area {
@@ -170,134 +177,28 @@
     position: relative;
   }
 
-  #preview-area::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 60% 40%, rgba(83,52,131,0.12) 0%, transparent 60%),
-                radial-gradient(ellipse at 20% 80%, rgba(233,69,96,0.07) 0%, transparent 50%);
-    pointer-events: none;
-  }
-
-  /* ── A4 COVER PAGE ── */
+  /* ── A4 COVER PAGE (Truncated for brevity, kept exactly same) ── */
   #cover-page {
-    width: 210mm;
-    height: 297mm;
-    padding: 25.4mm;
-    background: #ffffff;
-    color: #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    width: 210mm; height: 297mm; padding: 25.4mm;
+    background: #ffffff; color: #000;
+    display: flex; flex-direction: column; justify-content: space-between;
     box-shadow: 0 20px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
-    position: relative;
     flex-shrink: 0;
   }
-
-  /* TOP BLOCK */
-  .cp-top {
-    text-align: center;
-  }
-
-  .cp-logo {
-    width: 150px;
-    height: 175px;
-    margin: 0 auto 30px;
-    display: block;
-  }
-
-  .cp-uni-en {
-    font-size: 25pt;
-    font-weight: 700;
-    font-family: 'Times New Roman', Times, serif;
-    color: #0d0d0d;
-    line-height: 1.2;
-  }
-
-  .cp-dept-label {
-    font-size: 14pt;
-    font-style: italic;
-    color: #0d0d0d;
-    margin-top: 12px;
-    font-family: 'Times New Roman', Times, serif;
-  }
-
-  .cp-dept-name {
-    font-size: 17pt;
-    font-weight: 700;
-    font-family: 'Times New Roman', Times, serif;
-    color: #111;
-    line-height: 1.3;
-    margin-top: 10px;
-  }
-
-  /* DIVIDER */
-  .cp-divider {
-    border: none;
-    border-top: 1px solid #333;
-    margin: 12px 0 10px;
-  }
-
-  /* MIDDLE BLOCK */
-  .cp-middle {
-    text-align: center;
-  }
-
-  .cp-course {
-    font-size: 14pt;
-    font-style: italic;
-    color: #333;
-    font-family: 'Times New Roman', Times, serif;
-    line-height: 1.6;
-  }
-
-  .cp-doc-type {
-    font-size: 28pt;
-    font-weight: 700;
-    font-family: 'Times New Roman', Times, serif;
-    color: #0d0d0d;
-    margin-top: 8px;
-  }
-
-  /* BOTTOM BLOCK: submission table */
-  .cp-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 14pt;
-    border: 1px solid #555;
-  }
-
-  .cp-table th {
-    background: #c0c0c0;
-    font-weight: 700;
-    font-size: 16pt;
-    padding: 7px 10px;
-    text-align: left;
-    border: 1px solid #666;
-    color: #000;
-  }
-
-  .cp-table td {
-    padding: 7px 9px;
-    vertical-align: top;
-    border: 1px solid #aaa;
-    color: #111;
-    line-height: 1.3;
-    width: 50%;
-  }
-
-  .cp-table td.left-col { padding-right: 10px; }
-  .cp-table td.right-col { padding-left: 10px; }
-
-  .cp-date {
-    text-align: center;
-    font-family: 'Times New Roman', Times, serif;
-    font-size: 13pt;
-    font-style: italic;
-    color: #222;
-    margin-top: 20px;
-  }
+  .cp-top { text-align: center; }
+  .cp-logo { width: 150px; height: 175px; margin: 0 auto 30px; display: block; }
+  .cp-uni-en { font-size: 25pt; font-weight: 700; font-family: 'Times New Roman', Times, serif; color: #0d0d0d; line-height: 1.2; }
+  .cp-dept-label { font-size: 14pt; font-style: italic; color: #0d0d0d; margin-top: 12px; font-family: 'Times New Roman', Times, serif; }
+  .cp-dept-name { font-size: 17pt; font-weight: 700; font-family: 'Times New Roman', Times, serif; color: #111; line-height: 1.3; margin-top: 10px; }
+  .cp-divider { border: none; border-top: 1px solid #333; margin: 12px 0 10px; }
+  .cp-middle { text-align: center; }
+  .cp-course { font-size: 14pt; font-style: italic; color: #333; font-family: 'Times New Roman', Times, serif; line-height: 1.6; }
+  .cp-doc-type { font-size: 28pt; font-weight: 700; font-family: 'Times New Roman', Times, serif; color: #0d0d0d; margin-top: 8px; }
+  .cp-table { width: 100%; border-collapse: collapse; font-family: 'Times New Roman', Times, serif; font-size: 14pt; border: 1px solid #555; }
+  .cp-table th { background: #c0c0c0; font-weight: 700; font-size: 16pt; padding: 7px 10px; text-align: left; border: 1px solid #666; color: #000; }
+  .cp-table td { padding: 7px 9px; vertical-align: top; border: 1px solid #aaa; color: #111; line-height: 1.3; width: 50%; }
+  .cp-table td.left-col { padding-right: 10px; } .cp-table td.right-col { padding-left: 10px; }
+  .cp-date { text-align: center; font-family: 'Times New Roman', Times, serif; font-size: 13pt; font-style: italic; color: #222; margin-top: 20px; }
 
   /* ── MOBILE RESPONSIVENESS ── */
   #mobile-menu-btn {
@@ -305,64 +206,59 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 1000;
-    padding: 12px 20px;
+    z-index: 100;
+    padding: 14px 24px;
     background: linear-gradient(135deg, var(--accent) 0%, #c73652 100%);
     color: white;
     border: none;
     border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
     font-family: 'DM Sans', sans-serif;
     font-weight: 600;
+    font-size: 15px;
     cursor: pointer;
   }
 
   #close-sidebar-btn {
     display: none;
     position: absolute;
-    top: 15px;
+    top: 50%;
+    transform: translateY(-50%);
     right: 15px;
-    background: transparent;
-    border: none;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 6px 12px;
     color: white;
-    font-size: 24px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
     cursor: pointer;
-    line-height: 1;
   }
 
   @media (max-width: 768px) {
-    #mobile-menu-btn {
-      display: block;
-    }
-
-    #close-sidebar-btn {
-      display: block;
-    }
+    #mobile-menu-btn { display: block; }
+    #close-sidebar-btn { display: block; }
 
     #sidebar {
       position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      z-index: 999;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease-in-out;
-      box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+      top: 0; left: 0;
+      width: 100%; /* Take full screen on mobile */
+      height: 100dvh;
+      transform: translateX(0); /* VISIBLE by default on mobile */
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    #sidebar.show-sidebar {
-      transform: translateX(0);
+    /* Class added via JS to hide the menu and show the preview */
+    #sidebar.hidden-mobile {
+      transform: translateX(-100%);
     }
 
     #cover-page {
       transform: scale(0.40);
       transform-origin: top center;
     }
-    
-    #preview-area {
-      padding: 20px 0;
-      align-items: flex-start;
-    }
+    #preview-area { padding: 20px 0; align-items: flex-start; }
   }
 </style>
 </head>
@@ -376,62 +272,43 @@
   <div id="sidebar-header">
     <h1>PUST Cover Page Generator</h1>
     <p>By Vengeance</p>
-    <button id="close-sidebar-btn" onclick="toggleSidebar()">×</button>
+    <button id="close-sidebar-btn" onclick="toggleSidebar()">View Preview ➔</button>
   </div>
 
   <div id="form-scroll">
-
-    <div id="sidebar-footer">
-    <button id="btn-pdf" onclick="generatePDF()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 15V3M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/>
-      </svg>
-      Download PDF
-    </button>
-  </div>
-  
-  <div class="section-label">University</div>
-
+    <div class="section-label">University</div>
     <div class="field">
       <label>University Name (English)</label>
-      <input type="text" id="f-uni-en" value="Pabna University of Science & Technology"
-        oninput="document.getElementById('p-uni-en').textContent=this.value">
+      <input type="text" id="f-uni-en" value="Pabna University of Science & Technology" oninput="document.getElementById('p-uni-en').textContent=this.value">
     </div>
-
     <div class="field">
       <label>Logo URL (paste image URL or leave blank)</label>
-      <input type="text" id="f-logo" placeholder="https://... or leave blank for default"
-        oninput="updateLogo(this.value)">
+      <input type="text" id="f-logo" placeholder="https://... or leave blank" oninput="updateLogo(this.value)">
     </div>
 
     <div class="section-label">Department Header</div>
-
-    <div class="field">
-      <label>Department of</label>
-      <input type="text" id="f-dept" value="Electrical and Electronic Engineering"
-        oninput="document.getElementById('p-dept').textContent=this.value">
-    </div>
-
-    <div class="field">
-      <label>Faculty</label>
-      <input type="text" id="f-faculty" value="Faculty of Engineering and Technology"
-        oninput="document.getElementById('p-faculty').textContent=this.value">
+    <div class="input-row">
+      <div class="field">
+        <label>Department of</label>
+        <input type="text" id="f-dept" value="Electrical and Electronic Engineering" oninput="document.getElementById('p-dept').textContent=this.value">
+      </div>
+      <div class="field">
+        <label>Faculty</label>
+        <input type="text" id="f-faculty" value="Faculty of Engineering" oninput="document.getElementById('p-faculty').textContent=this.value">
+      </div>
     </div>
 
     <div class="section-label">Course</div>
-
-    <div class="field">
-      <label>Course Title</label>
-      <input type="text" id="f-course-title" value=""
-        oninput="document.getElementById('p-course-title').textContent=this.value">
+    <div class="input-row">
+      <div class="field">
+        <label>Course Title</label>
+        <input type="text" id="f-course-title" value="" oninput="document.getElementById('p-course-title').textContent=this.value">
+      </div>
+      <div class="field">
+        <label>Course Code</label>
+        <input type="text" id="f-course-code" value="" oninput="document.getElementById('p-course-code').textContent=this.value">
+      </div>
     </div>
-
-    <div class="field">
-      <label>Course Code</label>
-      <input type="text" id="f-course-code" value=""
-        oninput="document.getElementById('p-course-code').textContent=this.value">
-    </div>
-
     <div class="field">
       <label>Document Type</label>
       <select id="f-doc-type" onchange="document.getElementById('p-doc-type').textContent=this.value">
@@ -441,104 +318,90 @@
     </div>
 
     <div class="section-label">Student Info</div>
-
-    <div class="field">
-      <label>Full Name</label>
-      <input type="text" id="f-stu-name" value="Md Faysal Al Shariar"
-        oninput="updateStudentBlock()">
+    <div class="input-row">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="f-stu-name" value="Md Faysal Al Shariar" oninput="updateStudentBlock()">
+      </div>
+      <div class="field">
+        <label>Roll Number</label>
+        <input type="text" id="f-stu-roll" value="" oninput="updateStudentBlock()">
+      </div>
     </div>
-
-    <div class="field">
-      <label>Roll Number</label>
-      <input type="text" id="f-stu-roll" value=""
-        oninput="updateStudentBlock()">
+    <div class="input-row">
+      <div class="field">
+        <label>Session</label>
+        <input type="text" id="f-stu-session" value="2023-24" oninput="updateStudentBlock()">
+      </div>
+      <div class="field">
+        <label>Year & Semester</label>
+        <input type="text" id="f-stu-year" value="2nd year 1st Sem" oninput="updateStudentBlock()">
+      </div>
     </div>
-
-    <div class="field">
-      <label>Session</label>
-      <input type="text" id="f-stu-session" value="2023-24"
-        oninput="updateStudentBlock()">
-    </div>
-
-    <div class="field">
-      <label>Year & Semester</label>
-      <input type="text" id="f-stu-year" value="2nd year 1st Semester"
-        oninput="updateStudentBlock()">
-    </div>
-
     <div class="field">
       <label>Student Department</label>
-      <input type="text" id="f-stu-dept" value="Department of Electrical And Electronic Engineering"
-        oninput="updateStudentBlock()">
+      <input type="text" id="f-stu-dept" value="Department of Electrical And Electronic Engineering" oninput="updateStudentBlock()">
     </div>
-
     <div class="field">
       <label>Student University</label>
-      <input type="text" id="f-stu-uni" value="Pabna University Of Science &amp; Technology"
-        oninput="updateStudentBlock()">
+      <input type="text" id="f-stu-uni" value="Pabna University Of Science &amp; Technology" oninput="updateStudentBlock()">
     </div>
 
     <div class="section-label">Teacher Info</div>
-
-    <div class="field">
-      <label>Teacher Name</label>
-      <input type="text" id="f-tch-name" value=""
-        oninput="updateTeacherBlock()">
+    <div class="input-row">
+      <div class="field">
+        <label>Teacher Name</label>
+        <input type="text" id="f-tch-name" value="" oninput="updateTeacherBlock()">
+      </div>
+      <div class="field">
+        <label>Title / Rank</label>
+        <select id="f-tch-title" onchange="updateTeacherBlock()">
+          <option value="Professor">Professor</option>
+          <option value="Associate Professor" selected>Associate Professor</option>
+          <option value="Assistant Professor">Assistant Professor</option>
+          <option value="Lecturer">Lecturer</option>
+        </select>
+      </div>
     </div>
-
-    <div class="field">
-      <label>Title / Rank</label>
-      <select id="f-tch-title" onchange="updateTeacherBlock()">
-        <option value="Professor">Professor</option>
-        <option value="Associate Professor" selected>Associate Professor</option>
-        <option value="Assistant Professor">Assistant Professor</option>
-        <option value="Lecturer">Lecturer</option>
-      </select>
-    </div>
-
     <div class="field">
       <label>Teacher Department</label>
-      <input type="text" id="f-tch-dept" value="Department of "
-        oninput="updateTeacherBlock()">
+      <input type="text" id="f-tch-dept" value="Department of " oninput="updateTeacherBlock()">
     </div>
-
-    <div class="field">
-      <label>Teacher Faculty</label>
-      <input type="text" id="f-tch-faculty" value="Faculty of "
-        oninput="updateTeacherBlock()">
-    </div>
-
-    <div class="field">
-      <label>Teacher University</label>
-      <input type="text" id="f-tch-uni" value="Pabna University Of Science &amp; Technology"
-        oninput="updateTeacherBlock()">
+    <div class="input-row">
+      <div class="field">
+        <label>Teacher Faculty</label>
+        <input type="text" id="f-tch-faculty" value="Faculty of " oninput="updateTeacherBlock()">
+      </div>
+      <div class="field">
+        <label>Teacher University</label>
+        <input type="text" id="f-tch-uni" value="PUST" oninput="updateTeacherBlock()">
+      </div>
     </div>
 
     <div class="section-label">Date</div>
-
     <div class="field">
       <label>Date of Submission</label>
-      <input type="text" id="f-date" value="15-04-2026"
-        oninput="document.getElementById('p-date').textContent='Date of Submission: '+this.value">
+      <input type="text" id="f-date" value="15-04-2026" oninput="document.getElementById('p-date').textContent='Date of Submission: '+this.value">
     </div>
-
-  </div></div>
+  </div><div id="sidebar-footer">
+    <button id="btn-pdf" onclick="generatePDF()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px">
+        <path d="M12 15V3M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/>
+      </svg>
+      Download PDF
+    </button>
+  </div>
+</div>
 
 <div id="preview-area">
   <div id="cover-page">
-
     <div class="cp-top">
-      <img id="p-logo" class="cp-logo"
-        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUJb09aXlqV9RNHAp5mk_QaRe08kkUf2OD7A&s"
-        alt="University Logo"
-        onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%2290%22 viewBox=%220 0 90 90%22><rect width=%2290%22 height=%2290%22 rx=%2245%22 fill=%22%23800000%22/><text x=%2245%22 y=%2255%22 font-size=%2230%22 fill=%22white%22 text-anchor=%22middle%22 font-family=%22serif%22>🎓</text></svg>'">
-
+      <img id="p-logo" class="cp-logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUJb09aXlqV9RNHAp5mk_QaRe08kkUf2OD7A&s" alt="Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%2290%22 viewBox=%220 0 90 90%22><rect width=%2290%22 height=%2290%22 rx=%2245%22 fill=%22%23800000%22/><text x=%2245%22 y=%2255%22 font-size=%2230%22 fill=%22white%22 text-anchor=%22middle%22 font-family=%22serif%22>🎓</text></svg>'">
       <div id="p-uni-en" class="cp-uni-en">Pabna University of Science and Technology</div>
-
       <div class="cp-dept-label">Department of</div>
       <div class="cp-dept-name">
         <span id="p-dept">Electrical and Electronic Engineering</span><br>
-        <span id="p-faculty">Faculty of Engineering and Technology</span>
+        <span id="p-faculty">Faculty of Engineering</span>
       </div>
     </div>
 
@@ -560,62 +423,47 @@
         </tr>
         <tr>
           <td class="left-col" id="p-student-cell">
-            Name: Md Faysal Al Shariar<br>
-            Roll: <br>
-            Session: 2023-24<br>
-            2nd year 1st Semester<br><br>
-            Department of Electrical And Electronic Engineering<br>
-            Pabna University Of Science &amp; Technology
+            Name: Md Faysal Al Shariar<br>Roll: <br>Session: 2023-24<br>2nd year 1st Sem<br><br>Department of Electrical And Electronic Engineering<br>Pabna University Of Science &amp; Technology
           </td>
           <td class="right-col" id="p-teacher-cell">
-            <br>
-            <br><br>
-            <br>
-            Faculty of <br>
-            Pabna University Of Science &amp; Technology
+            <br>Associate Professor<br><br>Department of <br>Faculty of <br>PUST
           </td>
         </tr>
       </table>
-
       <div class="cp-date" id="p-date">Date of Submission: 15-04-2026</div>
     </div>
+  </div>
+</div>
 
-  </div></div><script>
+<script>
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('show-sidebar');
+    sidebar.classList.toggle('hidden-mobile');
   }
 
   function updateLogo(val) {
     const img = document.getElementById('p-logo');
-    if (val.trim()) {
-      img.src = val.trim();
-    } else {
-      img.src = 'https://upload.wikimedia.org/wikipedia/en/c/c6/Pabna_University_of_Science_and_Technology_logo.png';
-    }
+    if (val.trim()) { img.src = val.trim(); } 
+    else { img.src = 'https://upload.wikimedia.org/wikipedia/en/c/c6/Pabna_University_of_Science_and_Technology_logo.png'; }
   }
 
   function updateStudentBlock() {
-    const name    = document.getElementById('f-stu-name').value;
-    const roll    = document.getElementById('f-stu-roll').value;
+    const name = document.getElementById('f-stu-name').value;
+    const roll = document.getElementById('f-stu-roll').value;
     const session = document.getElementById('f-stu-session').value;
-    const year    = document.getElementById('f-stu-year').value;
-    const dept    = document.getElementById('f-stu-dept').value;
-    const uni     = document.getElementById('f-stu-uni').value;
-
-    document.getElementById('p-student-cell').innerHTML =
-      `Name: ${name}<br>Roll: ${roll}<br>Session: ${session}<br>${year}<br><br>${dept}<br>${uni}`;
+    const year = document.getElementById('f-stu-year').value;
+    const dept = document.getElementById('f-stu-dept').value;
+    const uni = document.getElementById('f-stu-uni').value;
+    document.getElementById('p-student-cell').innerHTML = `Name: ${name}<br>Roll: ${roll}<br>Session: ${session}<br>${year}<br><br>${dept}<br>${uni}`;
   }
 
   function updateTeacherBlock() {
-    const name    = document.getElementById('f-tch-name').value;
-    const title   = document.getElementById('f-tch-title').value;
-    const dept    = document.getElementById('f-tch-dept').value;
+    const name = document.getElementById('f-tch-name').value;
+    const title = document.getElementById('f-tch-title').value;
+    const dept = document.getElementById('f-tch-dept').value;
     const faculty = document.getElementById('f-tch-faculty').value;
-    const uni     = document.getElementById('f-tch-uni').value;
-
-    document.getElementById('p-teacher-cell').innerHTML =
-      `${name}<br>${title}<br><br>${dept}<br>${faculty}<br>${uni}`;
+    const uni = document.getElementById('f-tch-uni').value;
+    document.getElementById('p-teacher-cell').innerHTML = `${name}<br>${title}<br><br>${dept}<br>${faculty}<br>${uni}`;
   }
 
   function generatePDF() {
@@ -628,15 +476,15 @@
     const docType = document.getElementById('f-doc-type').value.replace(/\s+/g, '_');
 
     const opt = {
-      margin:       0,
-      filename:     `${stuName}_${docType}_Cover.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
-      jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      margin: 0,
+      filename: `${stuName}_${docType}_Cover.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
     html2pdf().set(opt).from(element).save().then(() => {
-      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 15V3M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg> Download PDF`;
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M12 15V3M7 10l5 5 5-5"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg> Download PDF`;
       btn.disabled = false;
     });
   }
